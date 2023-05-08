@@ -1,6 +1,7 @@
 package travelator;
 
 import org.junit.jupiter.api.Test;
+import travelator._kotlin.EmailAddress;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
