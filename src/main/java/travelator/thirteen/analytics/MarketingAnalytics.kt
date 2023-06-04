@@ -1,4 +1,4 @@
-package travelator.analytics
+package travelator.thirteen.analytics
 
 import kotlin.streams.asSequence
 
