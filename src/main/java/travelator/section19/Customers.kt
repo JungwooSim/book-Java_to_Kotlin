@@ -1,0 +1,11 @@
+package travelator.section19
+
+import dev.forkhandles.result4k.Result
+import java.util.*
+
+interface Customers {
+
+	fun add(name:String, email:String): Result<Customer, DuplicateException>
+
+	fun find(id: String): Optional<Customer>
+}
