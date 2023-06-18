@@ -9,6 +9,7 @@ import java.net.HttpURLConnection.HTTP_CONFLICT
 import java.net.HttpURLConnection.HTTP_CREATED
 import java.net.HttpURLConnection.HTTP_FORBIDDEN
 import java.net.HttpURLConnection.HTTP_INTERNAL_ERROR
+import travelator.section19.DatabaseProblem
 import travelator.section19.Duplicate
 import travelator.section19.Excluded
 import travelator.section19.IRegisterCustomers
@@ -21,29 +22,29 @@ class CustomerRegistrationHandler(
 ) {
 	private val objectMapper = ObjectMapper()
 
-	fun handle(request: Request): Response {
-		return try {
+	fun handle(request: Request): Response =
+		try {
 			val data = objectMapper.readValue(
 				request.body,
 				RegistrationData::class.java
 			)
-
-			registration.registerToo(data).map { value ->
-				Response(
-					HTTP_CREATED,
-					objectMapper.writeValueAsString(value)
-				)
-			}.recover { reason -> reason.toResponse() }
-
+			registration.register(data)
+				.map { value ->
+					Response(
+						HTTP_CREATED,
+						objectMapper.writeValueAsString(value)
+					)
+				}
+				.recover { reason -> reason.toResponse() }
 		} catch (x: JsonProcessingException) {
 			Response(HTTP_BAD_REQUEST)
 		} catch (x: Exception) {
 			Response(HTTP_INTERNAL_ERROR)
 		}
-	}
+}
 
-	private fun RegistrationProblem.toResponse() = when (this) {
-		is Duplicate -> Response(HTTP_CONFLICT)
-		is Excluded -> Response(HTTP_FORBIDDEN)
-	}
+private fun RegistrationProblem.toResponse() = when (this) {
+	is Duplicate -> Response(HTTP_CONFLICT)
+	is Excluded -> Response(HTTP_FORBIDDEN)
+	is DatabaseProblem -> Response(HTTP_INTERNAL_ERROR)
 }

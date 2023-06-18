@@ -11,10 +11,13 @@ class InMemoryCustomers : Customers {
 	private val list: MutableList<Customer> = ArrayList()
 	private var id = 0
 
-	override fun add(name: String, email: String): Result<Customer, DuplicateException> =
+	override fun add(name: String, email: String)
+	 : Result<Customer, DuplicateException> =
 		when {
-			list.any { it.email == email} -> Failure(
-				DuplicateException("customer with eamil $email already exists")
+			list.any { it.email == email } -> Failure(
+				DuplicateException(
+					"customer with email $email already exists"
+				)
 			)
 			else -> {
 				val result = Customer(id++.toString(), name, email)
@@ -24,5 +27,12 @@ class InMemoryCustomers : Customers {
 		}
 
 	override fun find(id: String): Optional<Customer> =
-		list.firstOrNull {it.id == id}.toOptional()
+		list.firstOrNull { it.id == id }.toOptional()
+
+	// for test
+	fun add(customer: Customer) {
+		list.add(customer)
+	}
+
+	fun size(): Int = list.size
 }
